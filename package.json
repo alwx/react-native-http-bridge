@@ -1,0 +1,23 @@
+{
+  "name": "react-native-http-server",
+  "version": "0.2",
+  "description": "A simple HTTP server implementation for React Native apps",
+  "main": "httpServer.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alwx/react-native-http-server.git"
+  },
+  "keywords": [
+    "react-component",
+    "react-native",
+    "nanohttpd",
+    "http",
+    "server"
+  ],
+  "author": "Alexander Pantyukhov; James Strain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alwx/react-native-http-server/issues"
+  },
+  "homepage": "https://github.com/alwx/react-native-http-server#readme"
+}
