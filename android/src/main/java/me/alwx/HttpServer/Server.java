@@ -22,19 +22,12 @@ public class Server extends NanoHTTPD {
     private Map<String, ReadableMap> response;
     private ReactContext reactContext;
 
-    private int timeout;
-
-    public Server(ReactContext context, int port, int timeout) {
+    public Server(ReactContext context, int port) {
         super(port);
         reactContext = context;
-        this.timeout = timeout;
         response = new HashMap<>();
 
         Log.d(TAG, "Server started");
-    }
-
-    public void setResponse(String uri, ReadableMap response) {
-        this.response.put(uri, response);
     }
 
     @Override
@@ -54,15 +47,13 @@ public class Server extends NanoHTTPD {
         }
 
         this.sendEvent(reactContext, SERVER_EVENT_ID, request);
-        return waitForResponse(session);
+        return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK");
     }
 
     private WritableMap fillRequestMap(IHTTPSession session) throws IOException, ResponseException {
         Method method = session.getMethod();
         WritableMap request = Arguments.createMap();
         request.putString("url", session.getUri());
-        request.putString("method", method.toString());
-        request.putMap("headers", this.convertToWritableMap(session.getHeaders()));
 
         Map<String, String> files = new HashMap<>();
         if (Method.POST.equals(method)) {
@@ -74,84 +65,7 @@ public class Server extends NanoHTTPD {
         return request;
     }
 
-    private Response waitForResponse(IHTTPSession session) {
-        Response.Status errorStatus = null;
-        String errorText = "";
-        int timer = 0;
-        int interval = 500;
-        ReadableMap response;
-
-        while (!this.response.containsKey(session.getUri()) && (timer < timeout)) {
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException e) {
-                Log.e(TAG, e.getMessage());
-                errorStatus = Response.Status.INTERNAL_ERROR;
-                errorText = e.getMessage();
-                break;
-            }
-
-            timer = timer + interval;
-        }
-
-        if (!this.response.containsKey(session.getUri())) {
-            errorStatus = Response.Status.NOT_FOUND;
-            errorText = "Resource not found";
-        }
-
-        if (errorStatus != null) {
-            return newFixedLengthResponse(errorStatus, MIME_PLAINTEXT, errorText);
-        } else {
-            response = this.response.get(session.getUri());
-            this.response.remove(session.getUri()); // clear responses
-        }
-
-        Log.d(TAG, "Sending response for " + session.getUri());
-
-        Response res = newFixedLengthResponse(
-                Response.Status.valueOf(response.getString("status")),
-                response.getString("type"),
-                response.getString("data"));
-
-        ReadableMap headers = response.getMap("headers");
-        com.facebook.react.bridge.ReadableMapKeySetIterator iterator = headers.keySetIterator();
-        if (!iterator.hasNextKey()) {
-            return null;
-        }
-        while (iterator.hasNextKey()) {
-            String key = iterator.nextKey();
-            Log.d(TAG, key + "=" + headers.getString(key));
-            res.addHeader(key, headers.getString(key));
-        }
-
-        return res;
-    }
-
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
-    }
-
-    private WritableMap convertToWritableMap(Map map) {
-        WritableMap request = Arguments.createMap();
-
-        Set<Map.Entry<String, String>> entrySet = map.entrySet();
-        for (Map.Entry entry : entrySet) {
-            switch (entry.getValue().getClass().getName()) {
-                case "java.lang.Boolean":
-                    request.putBoolean(entry.getKey().toString(), (Boolean) entry.getValue());
-                    break;
-                case "java.lang.Integer":
-                    request.putInt(entry.getKey().toString(), (Integer) entry.getValue());
-                    break;
-                case "java.lang.Double":
-                    request.putDouble(entry.getKey().toString(), (Double) entry.getValue());
-                    break;
-                case "java.lang.String":
-                    request.putString(entry.getKey().toString(), (String) entry.getValue());
-                    break;
-            }
-        }
-
-        return request;
     }
 }
