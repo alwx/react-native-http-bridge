@@ -48,11 +48,13 @@ RCT_EXPORT_METHOD(stop)
 {
     RCTLogInfo(@"Stopping HTTP bridge server");
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        if (_webServer) {
+    //dispatch_sync(dispatch_get_main_queue(), ^{
+        if (_webServer != nil) {
             [_webServer stop];
+            [_webServer removeAllHandlers];
+            _webServer = nil;
         }
-    });
+    //});
 }
 
 @end

@@ -56,8 +56,10 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void stop() {
         Log.d(MODULE_NAME, "Server stopped");
-        server.stop();
-        server = null;
+        if (server != null) {
+            server.stop();
+            server = null;
+        }
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
@@ -37,20 +36,17 @@ public class Server extends NanoHTTPD {
         WritableMap request;
         try {
             request = fillRequestMap(session);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return newFixedLengthResponse(
-                    Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT,
-                    "SERVER INTERNAL ERROR: IOException: " + e.getMessage()
+                    Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, e.getMessage()
             );
-        } catch (ResponseException e) {
-            return newFixedLengthResponse(e.getStatus(), MIME_PLAINTEXT, e.getMessage());
         }
 
         this.sendEvent(reactContext, SERVER_EVENT_ID, request);
         return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK");
     }
 
-    private WritableMap fillRequestMap(IHTTPSession session) throws IOException, ResponseException {
+    private WritableMap fillRequestMap(IHTTPSession session) throws Exception {
         Method method = session.getMethod();
         WritableMap request = Arguments.createMap();
         request.putString("url", session.getUri());
