@@ -1,7 +1,7 @@
 #import "RCTHttpServer.h"
-#import "RCTBridge.h"
-#import "RCTLog.h"
-#import "RCTEventDispatcher.h"
+#import "React/RCTBridge.h"
+#import "React/RCTLog.h"
+#import "React/RCTEventDispatcher.h"
 
 #import "WGCDWebServer.h"
 #import "WGCDWebServerDataResponse.h"

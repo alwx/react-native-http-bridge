@@ -1,6 +1,6 @@
 {
   "name": "react-native-http-bridge",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A simple HTTP debug server for React Native apps",
   "main": "httpServer.js",
   "repository": {
