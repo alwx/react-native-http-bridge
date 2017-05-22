@@ -1,6 +1,8 @@
 package me.alwx.HttpServer;
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
@@ -20,6 +22,7 @@ public class Server extends NanoHTTPD {
 
     private Map<String, ReadableMap> response;
     private ReactContext reactContext;
+    private Response requestResponse;
 
     public Server(ReactContext context, int port) {
         super(port);
@@ -33,6 +36,8 @@ public class Server extends NanoHTTPD {
     public Response serve(IHTTPSession session) {
         Log.d(TAG, "Request received!");
 
+        requestResponse = null;
+
         WritableMap request;
         try {
             request = fillRequestMap(session);
@@ -43,7 +48,19 @@ public class Server extends NanoHTTPD {
         }
 
         this.sendEvent(reactContext, SERVER_EVENT_ID, request);
-        return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK");
+
+        while (requestResponse == null) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                Log.d(TAG, "Exception while waiting: " + e);
+            }
+        }
+        return requestResponse;
+    }
+
+    public void respond(int code, String type, String body) {
+        requestResponse = newFixedLengthResponse(Status.lookup(code), type, body);
     }
 
     private WritableMap fillRequestMap(IHTTPSession session) throws Exception {
