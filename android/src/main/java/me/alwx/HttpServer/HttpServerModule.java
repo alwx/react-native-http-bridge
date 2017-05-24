@@ -1,5 +1,8 @@
 package me.alwx.HttpServer;
 
+import android.content.Context;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -13,16 +16,37 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
     ReactApplicationContext reactContext;
 
     private static final String MODULE_NAME = "HttpServer";
-    private static final int DEFAULT_PORT = 5561;
 
     private int port;
+    private String serviceName;
     private Server server = null;
+
+    private NsdManager.RegistrationListener regListener = new NsdManager.RegistrationListener() {
+        @Override
+        public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.d(MODULE_NAME, "NDS onRegistrationFailed: " + errorCode);
+        }
+
+        @Override
+        public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.d(MODULE_NAME, "NDS onUnregistrationFailed: " + errorCode);
+        }
+
+        @Override
+        public void onServiceRegistered(NsdServiceInfo serviceInfo) {
+            Log.d(MODULE_NAME, "NDS onServiceRegistered: " + serviceInfo);
+            serviceName = serviceInfo.getServiceName();
+        }
+
+        @Override
+        public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
+            Log.d(MODULE_NAME, "NDS onServiceUnregistered: " + serviceInfo);
+        }
+    };
 
     public HttpServerModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-
-        port = DEFAULT_PORT;
 
         reactContext.addLifecycleEventListener(this);
     }
@@ -33,24 +57,12 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void start(int port) {
+    public void start(int port, String serviceName) {
         Log.d(MODULE_NAME, "Initializing server...");
         this.port = port;
+        this.serviceName = serviceName;
 
-        start();
-    }
-
-    private void start() {
-        if (port == 0) {
-            return;
-        }
-
-        server = new Server(reactContext, port);
-        try {
-            server.start();
-        } catch (IOException e) {
-            Log.e(MODULE_NAME, e.getMessage());
-        }
+        resumeServer();
     }
 
     @ReactMethod
@@ -62,26 +74,66 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
 
     @ReactMethod
     public void stop() {
-        Log.d(MODULE_NAME, "Server stopped");
-        if (server != null) {
-            server.stop();
-            server = null;
-        }
+        Log.d(MODULE_NAME, "Stopping server...");
+
+        pauseServer();
+
+        port = 0;
+        serviceName = null;
     }
 
     @Override
     public void onHostResume() {
-        start();
+        resumeServer();
     }
 
     @Override
     public void onHostPause() {
-        stop();
+        pauseServer();
     }
 
     @Override
     public void onHostDestroy() {
-        stop();
+        pauseServer();
     }
 
+    private void resumeServer() {
+        if (port == 0 || serviceName == null) {
+            return;
+        }
+
+        server = new Server(reactContext, port);
+        try {
+            server.start();
+            Log.d(MODULE_NAME, "RegisterNDS with " + port + " " + serviceName);
+            registerService();
+        } catch (IOException e) {
+            Log.e(MODULE_NAME, e.getMessage());
+        }
+    }
+
+    private void pauseServer() {
+        if (server != null) {
+            server.stop();
+            unregisterService();
+            server = null;
+        }
+    }
+
+    private void registerService() {
+        NsdServiceInfo serviceInfo  = new NsdServiceInfo();
+        serviceInfo.setServiceName(serviceName);
+        serviceInfo.setServiceType("_http._tcp.");
+        serviceInfo.setPort(port);
+
+        NsdManager manager = (NsdManager) reactContext.getSystemService(Context.NSD_SERVICE);
+
+        Log.d(MODULE_NAME, "Registering service \"" + serviceName + "\" (port " + port + ")");
+        manager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, regListener);
+    }
+
+    private void unregisterService() {
+        NsdManager manager = (NsdManager) reactContext.getSystemService(Context.NSD_SERVICE);
+        manager.unregisterService(regListener);
+    }
 }

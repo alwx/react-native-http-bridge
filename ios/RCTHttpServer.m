@@ -21,7 +21,8 @@ static RCTBridge *bridge;
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(start:(NSInteger) port)
+RCT_EXPORT_METHOD(start:(NSInteger) port
+                  serviceName:(NSString *) serviceName)
 {
     RCTLogInfo(@"Running HTTP bridge server: %d", port);
 
@@ -46,7 +47,7 @@ RCT_EXPORT_METHOD(start:(NSInteger) port)
             return _requestResponse;
         }];
 
-        [_webServer startWithPort:port bonjourName:nil];
+        [_webServer startWithPort:port bonjourName:serviceName];
     });
 }
 
