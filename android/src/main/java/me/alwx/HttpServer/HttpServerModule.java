@@ -80,6 +80,14 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
     }
 
     @Override
+    public void onHostResume() {
+    }
+
+    @Override
+    public void onHostPause() {
+    }
+
+    @Override
     public void onHostDestroy() {
         stopServer();
     }
