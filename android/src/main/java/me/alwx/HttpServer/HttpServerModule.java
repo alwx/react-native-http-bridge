@@ -17,9 +17,9 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
 
     private static final String MODULE_NAME = "HttpServer";
 
-    private int port;
-    private String serviceName;
-    private Server server = null;
+    private static int port;
+    private static String serviceName;
+    private static Server server = null;
 
     private NsdManager.RegistrationListener regListener = new NsdManager.RegistrationListener() {
         @Override
@@ -62,7 +62,14 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
         this.port = port;
         this.serviceName = serviceName;
 
-        resumeServer();
+        startServer();
+    }
+
+    @ReactMethod
+    public void stop() {
+        Log.d(MODULE_NAME, "Stopping server...");
+
+        stopServer();
     }
 
     @ReactMethod
@@ -72,37 +79,19 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
         }
     }
 
-    @ReactMethod
-    public void stop() {
-        Log.d(MODULE_NAME, "Stopping server...");
-
-        pauseServer();
-
-        port = 0;
-        serviceName = null;
-    }
-
-    @Override
-    public void onHostResume() {
-        resumeServer();
-    }
-
-    @Override
-    public void onHostPause() {
-        pauseServer();
-    }
-
     @Override
     public void onHostDestroy() {
-        pauseServer();
+        stopServer();
     }
 
-    private void resumeServer() {
-        if (port == 0 || serviceName == null) {
+    private void startServer() {
+        if (this.port == 0 || this.serviceName == null) {
             return;
         }
 
-        server = new Server(reactContext, port);
+        if (server == null) {
+            server = new Server(reactContext, port);
+        }
         try {
             server.start();
             Log.d(MODULE_NAME, "RegisterNDS with " + port + " " + serviceName);
@@ -112,11 +101,14 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
         }
     }
 
-    private void pauseServer() {
+    private void stopServer() {
         if (server != null) {
             server.stop();
             unregisterService();
+
             server = null;
+            port = 0;
+            serviceName = null;
         }
     }
 
