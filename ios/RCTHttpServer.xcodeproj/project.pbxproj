@@ -96,6 +96,7 @@
 		B29ECA251E48CDE300704A36 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 		B29ECA271E48CE1C00704A36 /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = ../../../../../../../../../usr/lib/libz.1.dylib; sourceTree = "<group>"; };
 		D4DBFB991F0D09590062028A /* libRCTHttpServer-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRCTHttpServer-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4DBFBA01F14BFFA0062028A /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib/libz.1.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +192,7 @@
 		B29EC9CD1E48BF1800704A36 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D4DBFBA01F14BFFA0062028A /* libz.1.tbd */,
 				B29ECA271E48CE1C00704A36 /* libz.1.dylib */,
 				B29ECA251E48CDE300704A36 /* libz.1.2.8.tbd */,
 				B29ECA231E48CDCB00704A36 /* libz.1.tbd */,
