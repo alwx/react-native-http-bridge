@@ -1,47 +1,50 @@
 #import "RCTHttpServer.h"
-#import "React/RCTBridge.h"
 #import "React/RCTLog.h"
-#import "React/RCTEventDispatcher.h"
-
-#import "WGCDWebServer.h"
-#import "WGCDWebServerDataResponse.h"
 #import "WGCDWebServerDataRequest.h"
 
-@interface RCTHttpServer : NSObject <RCTBridgeModule> {
+@implementation RCTHttpServer {
     WGCDWebServer* _webServer;
     WGCDWebServerDataResponse* _requestResponse;
 }
-@end
-
-static RCTBridge *bridge;
-
-@implementation RCTHttpServer
-
-@synthesize bridge = _bridge;
 
 RCT_EXPORT_MODULE();
+
+- (NSArray<NSString *> *)supportedEvents
+{
+    return @[@"httpServerResponseReceived"];
+}
+
 
 RCT_EXPORT_METHOD(start:(NSInteger) port
                   serviceName:(NSString *) serviceName)
 {
-    RCTLogInfo(@"Running HTTP bridge server: %d", port);
+    RCTLogInfo(@"Running HTTP bridge server: %ld", (long)port);
+    
+    __weak __typeof(self) weakSelf = self;
 
     dispatch_sync(dispatch_get_main_queue(), ^{
         _webServer = [[WGCDWebServer alloc] init];
+    
 
         [_webServer addDefaultHandlerForMethod:@"POST"
                     requestClass:[WGCDWebServerDataRequest class]
                     processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
-
-            WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
+                        
+            id payload = nil;
             _requestResponse = NULL;
+            if (request.hasBody) {
+                WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
+                payload = dataRequest.jsonObject;
+            }
 
-            [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                         body:@{@"postData": dataRequest.jsonObject,
-                                                                     @"url": dataRequest.URL.relativeString}];
+            [weakSelf sendEventWithName:@"httpServerResponseReceived"
+                               body:@{
+                                 @"postData" : payload,
+                                 @"url" : request.URL.relativeString
+                               }];
 
             while (_requestResponse == NULL) {
-                [NSThread sleepForTimeInterval:0.1f];
+              [NSThread sleepForTimeInterval:0.1f];
             }
 
             return _requestResponse;

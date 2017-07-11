@@ -22,10 +22,33 @@
 		B232F40E1E49DE0C00C8AEE0 /* WGCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F4011E49DE0C00C8AEE0 /* WGCDWebServerStreamedResponse.m */; };
 		B2340C241E48BA3E0024C045 /* RCTHttpServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B2340C231E48BA3E0024C045 /* RCTHttpServer.m */; };
 		B29ECA281E48CE1C00704A36 /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B29ECA271E48CE1C00704A36 /* libz.1.dylib */; };
+		D4DBFB851F0D09590062028A /* WGCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3F41E49DE0C00C8AEE0 /* WGCDWebServerFileRequest.m */; };
+		D4DBFB861F0D09590062028A /* WGCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3F21E49DE0C00C8AEE0 /* WGCDWebServerDataRequest.m */; };
+		D4DBFB871F0D09590062028A /* WGCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3FF1E49DE0C00C8AEE0 /* WGCDWebServerFileResponse.m */; };
+		D4DBFB881F0D09590062028A /* WGCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3FD1E49DE0C00C8AEE0 /* WGCDWebServerErrorResponse.m */; };
+		D4DBFB891F0D09590062028A /* WGCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F4011E49DE0C00C8AEE0 /* WGCDWebServerStreamedResponse.m */; };
+		D4DBFB8A1F0D09590062028A /* WGCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3FB1E49DE0C00C8AEE0 /* WGCDWebServerDataResponse.m */; };
+		D4DBFB8B1F0D09590062028A /* WGCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3E51E49DE0C00C8AEE0 /* WGCDWebServer.m */; };
+		D4DBFB8C1F0D09590062028A /* WGCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3ED1E49DE0C00C8AEE0 /* WGCDWebServerRequest.m */; };
+		D4DBFB8D1F0D09590062028A /* WGCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3E71E49DE0C00C8AEE0 /* WGCDWebServerConnection.m */; };
+		D4DBFB8E1F0D09590062028A /* WGCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3F81E49DE0C00C8AEE0 /* WGCDWebServerURLEncodedFormRequest.m */; };
+		D4DBFB8F1F0D09590062028A /* WGCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3EF1E49DE0C00C8AEE0 /* WGCDWebServerResponse.m */; };
+		D4DBFB901F0D09590062028A /* WGCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3E91E49DE0C00C8AEE0 /* WGCDWebServerFunctions.m */; };
+		D4DBFB911F0D09590062028A /* WGCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B232F3F61E49DE0C00C8AEE0 /* WGCDWebServerMultiPartFormRequest.m */; };
+		D4DBFB921F0D09590062028A /* RCTHttpServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B2340C231E48BA3E0024C045 /* RCTHttpServer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1441618C1BD0A79300FA4F59 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4DBFB951F0D09590062028A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -72,6 +95,8 @@
 		B29ECA231E48CDCB00704A36 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
 		B29ECA251E48CDE300704A36 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 		B29ECA271E48CE1C00704A36 /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = ../../../../../../../../../usr/lib/libz.1.dylib; sourceTree = "<group>"; };
+		D4DBFB991F0D09590062028A /* libRCTHttpServer-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRCTHttpServer-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4DBFBA01F14BFFA0062028A /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib/libz.1.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +105,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B29ECA281E48CE1C00704A36 /* libz.1.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4DBFB931F0D09590062028A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +125,7 @@
 				B2340C221E48BA3E0024C045 /* RCTHttpServer.h */,
 				B2340C231E48BA3E0024C045 /* RCTHttpServer.m */,
 				B29EC9CC1E48BED600704A36 /* libRCTHttpServer.a */,
+				D4DBFB991F0D09590062028A /* libRCTHttpServer-macOS.a */,
 				B29EC9CD1E48BF1800704A36 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -159,6 +192,7 @@
 		B29EC9CD1E48BF1800704A36 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D4DBFBA01F14BFFA0062028A /* libz.1.tbd */,
 				B29ECA271E48CE1C00704A36 /* libz.1.dylib */,
 				B29ECA251E48CDE300704A36 /* libz.1.2.8.tbd */,
 				B29ECA231E48CDCB00704A36 /* libz.1.tbd */,
@@ -185,6 +219,23 @@
 			name = RCTHttpServer;
 			productName = RCTHttpServer;
 			productReference = B29EC9CC1E48BED600704A36 /* libRCTHttpServer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		D4DBFB831F0D09590062028A /* RCTHttpServer-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D4DBFB961F0D09590062028A /* Build configuration list for PBXNativeTarget "RCTHttpServer-macOS" */;
+			buildPhases = (
+				D4DBFB841F0D09590062028A /* Sources */,
+				D4DBFB931F0D09590062028A /* Frameworks */,
+				D4DBFB951F0D09590062028A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "RCTHttpServer-macOS";
+			productName = RCTHttpServer;
+			productReference = D4DBFB991F0D09590062028A /* libRCTHttpServer-macOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -214,6 +265,7 @@
 			projectRoot = "";
 			targets = (
 				1441618D1BD0A79300FA4F59 /* RCTHttpServer */,
+				D4DBFB831F0D09590062028A /* RCTHttpServer-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -240,6 +292,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D4DBFB841F0D09590062028A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4DBFB851F0D09590062028A /* WGCDWebServerFileRequest.m in Sources */,
+				D4DBFB861F0D09590062028A /* WGCDWebServerDataRequest.m in Sources */,
+				D4DBFB871F0D09590062028A /* WGCDWebServerFileResponse.m in Sources */,
+				D4DBFB881F0D09590062028A /* WGCDWebServerErrorResponse.m in Sources */,
+				D4DBFB891F0D09590062028A /* WGCDWebServerStreamedResponse.m in Sources */,
+				D4DBFB8A1F0D09590062028A /* WGCDWebServerDataResponse.m in Sources */,
+				D4DBFB8B1F0D09590062028A /* WGCDWebServer.m in Sources */,
+				D4DBFB8C1F0D09590062028A /* WGCDWebServerRequest.m in Sources */,
+				D4DBFB8D1F0D09590062028A /* WGCDWebServerConnection.m in Sources */,
+				D4DBFB8E1F0D09590062028A /* WGCDWebServerURLEncodedFormRequest.m in Sources */,
+				D4DBFB8F1F0D09590062028A /* WGCDWebServerResponse.m in Sources */,
+				D4DBFB901F0D09590062028A /* WGCDWebServerFunctions.m in Sources */,
+				D4DBFB911F0D09590062028A /* WGCDWebServerMultiPartFormRequest.m in Sources */,
+				D4DBFB921F0D09590062028A /* RCTHttpServer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -250,8 +323,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
 					"$(SDKROOT)/usr/include/libxml2/**",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -269,7 +341,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
 					"$(SDKROOT)/usr/include/libxml2/**",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -314,11 +386,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -356,16 +424,54 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D4DBFB971F0D09590062028A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					"$(SDKROOT)/usr/include/libxml2/**",
+					"$(SRCROOT)/../../react-native-macos/React/**",
+					"$(BUILT_PRODUCTS_DIR)/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		D4DBFB981F0D09590062028A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					"$(SDKROOT)/usr/include/libxml2/**",
+					"$(SRCROOT)/../../react-native-macos/React/**",
+					"$(BUILT_PRODUCTS_DIR)/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
@@ -386,6 +492,15 @@
 			buildConfigurations = (
 				145CC5821AED80100006342E /* Debug */,
 				145CC5831AED80100006342E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D4DBFB961F0D09590062028A /* Build configuration list for PBXNativeTarget "RCTHttpServer-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4DBFB971F0D09590062028A /* Debug */,
+				D4DBFB981F0D09590062028A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
