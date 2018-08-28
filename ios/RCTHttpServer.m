@@ -21,32 +21,36 @@ static RCTBridge *bridge;
 
 RCT_EXPORT_MODULE();
 
+
+- (void)initResponseReceivedFor:(WGCDWebServer *)server forType:(NSString*)type {
+    [server addDefaultHandlerForMethod:type requestClass:[WGCDWebServerDataRequest class] processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
+        WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
+        _requestResponse = NULL;
+        
+        [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
+                                                     body:@{@"postData": dataRequest.jsonObject,
+                                                            @"type": type,
+                                                            @"url": dataRequest.URL.relativeString}];
+        while (_requestResponse == NULL) {
+            [NSThread sleepForTimeInterval:0.01f];
+        }
+        return _requestResponse;
+    }];
+}
+
 RCT_EXPORT_METHOD(start:(NSInteger) port
                   serviceName:(NSString *) serviceName)
 {
     RCTLogInfo(@"Running HTTP bridge server: %d", port);
-
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
         _webServer = [[WGCDWebServer alloc] init];
-
-        [_webServer addDefaultHandlerForMethod:@"POST"
-                    requestClass:[WGCDWebServerDataRequest class]
-                    processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
-
-            WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
-            _requestResponse = NULL;
-
-            [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                         body:@{@"postData": dataRequest.jsonObject,
-                                                                     @"url": dataRequest.URL.relativeString}];
-
-            while (_requestResponse == NULL) {
-                [NSThread sleepForTimeInterval:0.1f];
-            }
-
-            return _requestResponse;
-        }];
-
+        
+        [self initResponseReceivedFor:_webServer forType:@"POST"];
+        [self initResponseReceivedFor:_webServer forType:@"PUT"];
+        [self initResponseReceivedFor:_webServer forType:@"GET"];
+        [self initResponseReceivedFor:_webServer forType:@"DELETE"];
+        
         [_webServer startWithPort:port bonjourName:serviceName];
     });
 }
@@ -54,14 +58,12 @@ RCT_EXPORT_METHOD(start:(NSInteger) port
 RCT_EXPORT_METHOD(stop)
 {
     RCTLogInfo(@"Stopping HTTP bridge server");
-
-    //dispatch_sync(dispatch_get_main_queue(), ^{
-        if (_webServer != nil) {
-            [_webServer stop];
-            [_webServer removeAllHandlers];
-            _webServer = nil;
-        }
-    //});
+    
+    if (_webServer != nil) {
+        [_webServer stop];
+        [_webServer removeAllHandlers];
+        _webServer = nil;
+    }
 }
 
 RCT_EXPORT_METHOD(respond:(NSInteger) code
@@ -70,6 +72,7 @@ RCT_EXPORT_METHOD(respond:(NSInteger) code
 {
     NSData* data = [body dataUsingEncoding:NSUTF8StringEncoding];
     _requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
+    _requestResponse.statusCode = code;
 }
 
 @end

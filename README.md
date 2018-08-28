@@ -1,8 +1,12 @@
 # react-native-http-bridge
 
-HTTP Server for [React Native](https://github.com/facebook/react-native)
+Simple HTTP server for [React Native](https://github.com/facebook/react-native)
 
-Supports only POST-requests and one-way communication. Created for [Status.im](https://github.com/status-im)
+Since 0.5.0 supports and handles GET, POST, PUT and DELETE requests.
+The library can be useful for handling requests with `application/json` content type
+(and this is the only content type we support at the current stage) and returning different responses.
+
+Created for [Status.im](https://github.com/status-im/status-react). 
 
 ## Install
 
@@ -29,20 +33,22 @@ First import/require react-native-http-server:
 ```
 
 
-Initalise the server in the `componentWillMount` lifecycle method. You need to provide a `port` and a callback where requests will be captured. Currently there is no way to return responses.
+Initalize the server in the `componentWillMount` lifecycle method. You need to provide a `port` and a callback.
 
 ```js
 
-    componentWillMount(){
-
+    componentWillMount() {
       // initalize the server (now accessible via localhost:1234)
       httpBridge.start(5561, function(request) {
 
-          // request.url
-          // request.postData
+          // you can use request.url, request.type and request.postData here
+          if (request.type === "GET" && request.url.split("/")[1] === "users") {
+            httpBridge.respond(200, "application/json", "{\"message\": \"OK\"}");
+          } else {
+            httpBridge.respond(400, "application/json", "{\"message\": \"Bad Request\"}");
+          }
 
       });
-
     }
 
 ```
