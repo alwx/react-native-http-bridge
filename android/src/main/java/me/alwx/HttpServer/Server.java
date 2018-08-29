@@ -67,14 +67,14 @@ public class Server extends NanoHTTPD {
         Method method = session.getMethod();
         WritableMap request = Arguments.createMap();
         request.putString("url", session.getUri());
-
+        request.putString("type", method.name());
+        
         Map<String, String> files = new HashMap<>();
-        if (Method.POST.equals(method)) {
-            session.parseBody(files);
-            if (files.size() > 0) {
-                request.putString("postData", files.get("postData"));
-            }
+        session.parseBody(files);
+        if (files.size() > 0) {
+          request.putString("postData", files.get("postData"));
         }
+
         return request;
     }
 
