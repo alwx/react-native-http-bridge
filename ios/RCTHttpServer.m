@@ -6,6 +6,7 @@
 #import "WGCDWebServer.h"
 #import "WGCDWebServerDataResponse.h"
 #import "WGCDWebServerDataRequest.h"
+#import "WGCDWebServerPrivate.h"
 
 @interface RCTHttpServer : NSObject <RCTBridgeModule> {
     WGCDWebServer* _webServer;
@@ -24,13 +25,27 @@ RCT_EXPORT_MODULE();
 
 - (void)initResponseReceivedFor:(WGCDWebServer *)server forType:(NSString*)type {
     [server addDefaultHandlerForMethod:type requestClass:[WGCDWebServerDataRequest class] processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
-        WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
         _requestResponse = NULL;
-        
-        [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                     body:@{@"postData": dataRequest.jsonObject,
-                                                            @"type": type,
-                                                            @"url": dataRequest.URL.relativeString}];
+
+        // it's a weird way of doing it, fix it
+        @try {
+            if ([WGCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
+                WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
+                [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
+                                                             body:@{@"postData": dataRequest.jsonObject,
+                                                                    @"type": type,
+                                                                    @"url": request.URL.relativeString}];
+            } else {
+                [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
+                                                             body:@{@"type": type,
+                                                                    @"url": request.URL.relativeString}];
+            }
+        } @catch (NSException *exception) {
+            [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
+                                                         body:@{@"type": type,
+                                                                @"url": request.URL.relativeString}];
+        }
+
         while (_requestResponse == NULL) {
             [NSThread sleepForTimeInterval:0.01f];
         }
