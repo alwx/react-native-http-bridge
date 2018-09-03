@@ -51,7 +51,7 @@ public class Server extends NanoHTTPD {
 
         while (requestResponse == null) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (Exception e) {
                 Log.d(TAG, "Exception while waiting: " + e);
             }
