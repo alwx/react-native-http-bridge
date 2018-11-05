@@ -7,10 +7,11 @@
 #import "WGCDWebServerDataResponse.h"
 #import "WGCDWebServerDataRequest.h"
 #import "WGCDWebServerPrivate.h"
+#include <stdlib.h>
 
 @interface RCTHttpServer : NSObject <RCTBridgeModule> {
     WGCDWebServer* _webServer;
-    WGCDWebServerDataResponse* _requestResponse;
+    NSMutableDictionary* _requestResponses;
 }
 @end
 
@@ -25,38 +26,48 @@ RCT_EXPORT_MODULE();
 
 - (void)initResponseReceivedFor:(WGCDWebServer *)server forType:(NSString*)type {
     [server addDefaultHandlerForMethod:type requestClass:[WGCDWebServerDataRequest class] processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
-        _requestResponse = NULL;
+        
+        long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+        int r = arc4random_uniform(1000000);
+        NSString *requestId = [NSString stringWithFormat:@"%lld:%d", milliseconds, r];
 
         // it's a weird way of doing it, fix it
         @try {
             if ([WGCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
                 WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
                 [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                             body:@{@"postData": dataRequest.jsonObject,
+                                                             body:@{@"requestId": requestId,
+                                                                    @"postData": dataRequest.jsonObject,
                                                                     @"type": type,
                                                                     @"url": request.URL.relativeString}];
             } else {
                 [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                             body:@{@"type": type,
+                                                             body:@{@"requestId": requestId,
+                                                                    @"type": type,
                                                                     @"url": request.URL.relativeString}];
             }
         } @catch (NSException *exception) {
             [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
-                                                         body:@{@"type": type,
+                                                         body:@{@"requestId": requestId,
+                                                                @"type": type,
                                                                 @"url": request.URL.relativeString}];
         }
-
-        while (_requestResponse == NULL) {
+        
+        while ([_requestResponses objectForKey:requestId] == NULL) {
             [NSThread sleepForTimeInterval:0.01f];
         }
-        return _requestResponse;
+    
+        WGCDWebServerDataResponse* response = [_requestResponses objectForKey:requestId];
+        [_requestResponses removeObjectForKey:requestId];
+        return response;
     }];
 }
 
 RCT_EXPORT_METHOD(start:(NSInteger) port
                   serviceName:(NSString *) serviceName)
 {
-    RCTLogInfo(@"Running HTTP bridge server: %d", port);
+    RCTLogInfo(@"Running HTTP bridge server: %ld", port);
+    _requestResponses = [[NSMutableDictionary alloc] init];
     
     dispatch_sync(dispatch_get_main_queue(), ^{
         _webServer = [[WGCDWebServer alloc] init];
@@ -81,13 +92,16 @@ RCT_EXPORT_METHOD(stop)
     }
 }
 
-RCT_EXPORT_METHOD(respond:(NSInteger) code
+RCT_EXPORT_METHOD(respond: (NSString *) requestId
+                  code: (NSInteger) code
                   type: (NSString *) type
                   body: (NSString *) body)
 {
     NSData* data = [body dataUsingEncoding:NSUTF8StringEncoding];
-    _requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
-    _requestResponse.statusCode = code;
+    WGCDWebServerDataResponse* requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
+    requestResponse.statusCode = code;
+    
+    [_requestResponses setObject:requestResponse forKey:requestId];
 }
 
 @end

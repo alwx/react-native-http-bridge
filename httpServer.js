@@ -22,7 +22,7 @@ module.exports = {
         DeviceEventEmitter.removeListener('httpServerResponseReceived');
     },
 
-    respond: function (code, type, body) {
-        Server.respond(code, type, body);
+    respond: function (requestId, code, type, body) {
+        Server.respond(requestId, code, type, body);
     }
 }
