@@ -63,7 +63,7 @@ public class Server extends NanoHTTPD {
     }
 
     public void respond(String requestId, int code, String type, String body) {
-        requestResponses.put(requestId, newFixedLengthResponse(Status.lookup(code), type, body));
+        responses.put(requestId, newFixedLengthResponse(Status.lookup(code), type, body));
     }
 
     private WritableMap fillRequestMap(IHTTPSession session, String requestId) throws Exception {
