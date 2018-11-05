@@ -46,9 +46,9 @@ public class HttpServerModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void respond(int code, String type, String body) {
+    public void respond(String requestId, int code, String type, String body) {
         if (server != null) {
-            server.respond(code, type, body);
+            server.respond(requestId, code, type, body);
         }
     }
 
