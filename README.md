@@ -40,13 +40,13 @@ Initalize the server in the `componentWillMount` lifecycle method. You need to p
 
     componentWillMount() {
       // initalize the server (now accessible via localhost:1234)
-      httpBridge.start(5561, function(request) {
+      httpBridge.start(5561, 'http_service' request => {
 
           // you can use request.url, request.type and request.postData here
           if (request.type === "GET" && request.url.split("/")[1] === "users") {
-            httpBridge.respond(200, "application/json", "{\"message\": \"OK\"}");
+            httpBridge.respond(request.requestId, 200, "application/json", "{\"message\": \"OK\"}");
           } else {
-            httpBridge.respond(400, "application/json", "{\"message\": \"Bad Request\"}");
+            httpBridge.respond(request.requestId, 400, "application/json", "{\"message\": \"Bad Request\"}");
           }
 
       });
