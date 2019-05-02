@@ -19,7 +19,7 @@ module.exports = {
 
     stop: function () {
         Server.stop();
-        DeviceEventEmitter.removeListener('httpServerResponseReceived');
+        DeviceEventEmitter.removeAllListeners('httpServerResponseReceived');
     },
 
     respond: function (requestId, code, type, body) {
