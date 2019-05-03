@@ -11,7 +11,7 @@
 
 @interface RCTHttpServer : NSObject <RCTBridgeModule> {
     WGCDWebServer* _webServer;
-    NSMutableDictionary* _requestResponses;
+    NSMutableDictionary* _completionBlocks;
 }
 @end
 
@@ -25,13 +25,16 @@ RCT_EXPORT_MODULE();
 
 
 - (void)initResponseReceivedFor:(WGCDWebServer *)server forType:(NSString*)type {
-    [server addDefaultHandlerForMethod:type requestClass:[WGCDWebServerDataRequest class] processBlock:^WGCDWebServerResponse *(WGCDWebServerRequest* request) {
+    [server addDefaultHandlerForMethod:type
+                          requestClass:[WGCDWebServerDataRequest class]
+                     asyncProcessBlock:^(WGCDWebServerRequest* request, WGCDWebServerCompletionBlock completionBlock) {
         
         long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
         int r = arc4random_uniform(1000000);
         NSString *requestId = [NSString stringWithFormat:@"%lld:%d", milliseconds, r];
 
-        // it's a weird way of doing it, fix it
+        [_completionBlocks setObject:completionBlock forKey:requestId];
+
         @try {
             if ([WGCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
                 WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
@@ -52,14 +55,6 @@ RCT_EXPORT_MODULE();
                                                                 @"type": type,
                                                                 @"url": request.URL.relativeString}];
         }
-        
-        while ([_requestResponses objectForKey:requestId] == NULL) {
-            [NSThread sleepForTimeInterval:0.01f];
-        }
-    
-        WGCDWebServerDataResponse* response = [_requestResponses objectForKey:requestId];
-        [_requestResponses removeObjectForKey:requestId];
-        return response;
     }];
 }
 
@@ -100,8 +95,12 @@ RCT_EXPORT_METHOD(respond: (NSString *) requestId
     NSData* data = [body dataUsingEncoding:NSUTF8StringEncoding];
     WGCDWebServerDataResponse* requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
     requestResponse.statusCode = code;
+
+    WGCDWebServerCompletionBlock completionBlock = [_completionBlocks objectForKey:requestId];
     
-    [_requestResponses setObject:requestResponse forKey:requestId];
+    completionBlock(requestResponse);
+
+    [_completionBlocks removeObjectForKey:requestId];
 }
 
 @end
