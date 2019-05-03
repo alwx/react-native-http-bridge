@@ -33,7 +33,9 @@ RCT_EXPORT_MODULE();
         int r = arc4random_uniform(1000000);
         NSString *requestId = [NSString stringWithFormat:@"%lld:%d", milliseconds, r];
 
-        [_completionBlocks setObject:completionBlock forKey:requestId];
+         @synchronized (self) {
+             [_completionBlocks setObject:completionBlock forKey:requestId];
+         }
 
         @try {
             if ([WGCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
@@ -96,11 +98,13 @@ RCT_EXPORT_METHOD(respond: (NSString *) requestId
     WGCDWebServerDataResponse* requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
     requestResponse.statusCode = code;
 
-    WGCDWebServerCompletionBlock completionBlock = [_completionBlocks objectForKey:requestId];
-    
-    completionBlock(requestResponse);
+    WGCDWebServerCompletionBlock completionBlock = nil;
+    @synchronized (self) {
+        completionBlock = [_completionBlocks objectForKey:requestId];
+        [_completionBlocks removeObjectForKey:requestId];
+    }
 
-    [_completionBlocks removeObjectForKey:requestId];
+    completionBlock(requestResponse);
 }
 
 @end
