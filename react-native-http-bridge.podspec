@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description    = package['description']
   s.license        = package['license']
   s.author         = package['author']
-  s.homepage       = package['repository']
+  s.homepage       = package['repository']['url']
   s.source         = { :git => 'https://github.com/alwx/react-native-http-bridge.git' }
 
   s.requires_arc   = true
