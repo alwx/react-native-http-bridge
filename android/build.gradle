@@ -35,6 +35,6 @@ android {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.gms:play-services-gcm:+'
+    compile 'com.google.android.gms:play-services-gcm:16.1.0'
     compile 'org.nanohttpd:nanohttpd:2.3.1'
 }
