@@ -3,14 +3,14 @@
 #import "React/RCTLog.h"
 #import "React/RCTEventDispatcher.h"
 
-#import "WGCDWebServer.h"
-#import "WGCDWebServerDataResponse.h"
-#import "WGCDWebServerDataRequest.h"
-#import "WGCDWebServerPrivate.h"
+#import "GCDWebServer.h"
+#import "GCDWebServerDataResponse.h"
+#import "GCDWebServerDataRequest.h"
+#import "GCDWebServerPrivate.h"
 #include <stdlib.h>
 
 @interface RCTHttpServer : NSObject <RCTBridgeModule> {
-    WGCDWebServer* _webServer;
+    GCDWebServer* _webServer;
     NSMutableDictionary* _completionBlocks;
 }
 @end
@@ -24,10 +24,10 @@ static RCTBridge *bridge;
 RCT_EXPORT_MODULE();
 
 
-- (void)initResponseReceivedFor:(WGCDWebServer *)server forType:(NSString*)type {
+- (void)initResponseReceivedFor:(GCDWebServer *)server forType:(NSString*)type {
     [server addDefaultHandlerForMethod:type
-                          requestClass:[WGCDWebServerDataRequest class]
-                     asyncProcessBlock:^(WGCDWebServerRequest* request, WGCDWebServerCompletionBlock completionBlock) {
+                          requestClass:[GCDWebServerDataRequest class]
+                     asyncProcessBlock:^(GCDWebServerRequest* request, GCDWebServerCompletionBlock completionBlock) {
         
         long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
         int r = arc4random_uniform(1000000);
@@ -38,8 +38,8 @@ RCT_EXPORT_MODULE();
          }
 
         @try {
-            if ([WGCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
-                WGCDWebServerDataRequest* dataRequest = (WGCDWebServerDataRequest*)request;
+            if ([GCDWebServerTruncateHeaderValue(request.contentType) isEqualToString:@"application/json"]) {
+                GCDWebServerDataRequest* dataRequest = (GCDWebServerDataRequest*)request;
                 [self.bridge.eventDispatcher sendAppEventWithName:@"httpServerResponseReceived"
                                                              body:@{@"requestId": requestId,
                                                                     @"postData": dataRequest.jsonObject,
@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(start:(NSInteger) port
     NSMutableDictionary *_requestResponses = [[NSMutableDictionary alloc] init];
     
     dispatch_sync(dispatch_get_main_queue(), ^{
-        _webServer = [[WGCDWebServer alloc] init];
+        _webServer = [[GCDWebServer alloc] init];
         
         [self initResponseReceivedFor:_webServer forType:@"POST"];
         [self initResponseReceivedFor:_webServer forType:@"PUT"];
@@ -95,10 +95,10 @@ RCT_EXPORT_METHOD(respond: (NSString *) requestId
                   body: (NSString *) body)
 {
     NSData* data = [body dataUsingEncoding:NSUTF8StringEncoding];
-    WGCDWebServerDataResponse* requestResponse = [[WGCDWebServerDataResponse alloc] initWithData:data contentType:type];
+    GCDWebServerDataResponse* requestResponse = [[GCDWebServerDataResponse alloc] initWithData:data contentType:type];
     requestResponse.statusCode = code;
 
-    WGCDWebServerCompletionBlock completionBlock = nil;
+    GCDWebServerCompletionBlock completionBlock = nil;
     @synchronized (self) {
         completionBlock = [_completionBlocks objectForKey:requestId];
         [_completionBlocks removeObjectForKey:requestId];
