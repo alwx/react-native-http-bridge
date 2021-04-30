@@ -1,14 +1,16 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 }
@@ -16,12 +18,12 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 29
         versionCode 2
         versionName "1.1"
         ndk {
@@ -34,7 +36,7 @@ android {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.gms:play-services-gcm:16.1.0'
-    compile 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.google.android.gms:play-services-gcm:16.1.0'
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }
