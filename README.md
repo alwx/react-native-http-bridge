@@ -40,7 +40,7 @@ Initalize the server in the `componentWillMount` lifecycle method. You need to p
 
     componentWillMount() {
       // initalize the server (now accessible via localhost:1234)
-      httpBridge.start(5561, 'http_service' request => {
+      httpBridge.start(5561, 'http_service', (request) => {
 
           // you can use request.url, request.type and request.postData here
           if (request.type === "GET" && request.url.split("/")[1] === "users") {
